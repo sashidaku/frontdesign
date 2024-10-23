@@ -4,14 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My App</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="app-container">
-        <h1>Welcome to My App</h1>
-        <button id="startButton">Start</button>
-    </div>
 
-    <script src="app.js"></script>
+<body>
+    <header class="header">
+        <div class="container">
+          <h1 class="logo">Vini</h1>
+          <ul class="nav">
+            <li class="header-hover-color"><a href="#">Home</a></li>
+            <li class="header-hover-color"><a href="#">Gallery</a></li>
+            <li class="header-hover-color"><a href="#">About Us</a></li>
+            <li class="header-hover-color"><a href="#">Contact Us</a></li>
+          </ul>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-wrap">
+            <div class="app-container">
+                <h1 class="introduce-app">Welcome to My App</h1>
+            </div>
+            <div class="button-wrap">
+                <a href="#" class="button">START</a>
+            </div>
+        </div>
+        <script src="app.js"></script>
+    </main>
 </body>
 </html>
