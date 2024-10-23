@@ -1,3 +1,3 @@
-document.getElementById('startButton').addEventListener('click', function() {
-    alert('App is starting!');
-});
+// document.getElementById('startButton').addEventListener('click', function() {
+//     alert('App is starting!');
+// });

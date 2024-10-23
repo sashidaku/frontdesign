@@ -14,7 +14,7 @@ body {
     gap: 50px 30px 0 0;
     align-items: center;
     justify-content: center;
-    max-width: 90vw;
+    /* max-width: 90vw; */
 }
 
 .button {
@@ -44,7 +44,7 @@ body {
     flex-wrap: wrap;
 
     min-width: 150px;
-    max-width: 100%;
+    /* max-width: 100%; */
     height: auto;
 }
 
