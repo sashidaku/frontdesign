@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顔認識アプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #message {
+            margin-top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #action-buttons {
+            margin-top: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>顔認識システム</h1>
+    <video id="video" autoplay></video><br>
+    <div id="message" class="hidden"></div>
+    <div id="action-buttons" class="hidden">
+        <button id="known">knownとして登録</button>
+        <button id="danger">dangerとして登録</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const message = document.getElementById('message');
+        const actionButtons = document.getElementById('action-buttons');
+        const knownButton = document.getElementById('known');
+        const dangerButton = document.getElementById('danger');
+
+        // カメラの映像を取得して表示
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => { video.srcObject = stream; })
+            .catch(error => { console.error("カメラの取得に失敗しました:", error); });
+
+        // フレームを定期的にAPIに送信して結果を取得
+        setInterval(async () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+            const formData = new FormData();
+            formData.append('image', blob);
+
+            // /detect APIに画像を送信して結果を受け取る
+            const response = await fetch('http://localhost:5000/detect', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            message.classList.remove('hidden');
+
+            if (data.result === 'danger') {
+                message.textContent = '危険です！';
+                actionButtons.classList.add('hidden'); // アクションボタンを非表示
+            } else if (data.result === 'known') {
+                message.textContent = '既知の人物です';
+                actionButtons.classList.add('hidden'); // アクションボタンを非表示
+            } else if (data.result === 'unknown') {
+                message.textContent = '未知の人物が検出されました。登録してください。';
+                actionButtons.classList.remove('hidden'); // アクションボタンを表示
+
+                knownButton.onclick = () => registerPerson(blob, 'known');
+                dangerButton.onclick = () => registerPerson(blob, 'danger');
+            }
+        }, 3000); // 3秒ごとにフレームを送信
+
+        // 未知の人物を登録するAPIリクエスト
+        async function registerPerson(imageBlob, personType) {
+            const formData = new FormData();
+            formData.append('image', imageBlob);
+            formData.append('person_type', personType);
+
+            const response = await fetch('http://localhost:5000/register', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            alert(data.message);
+            actionButtons.classList.add('hidden'); // アクションボタンを非表示
+            message.textContent = ''; // メッセージをクリア
+        }
+    </script>
+</body>
+</html>
+
+
